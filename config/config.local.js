@@ -11,6 +11,18 @@ module.exports = () => {
     baseUrl: 'http://oa.chinahuian.cn', // 微信网关地址
   };
 
+    // mongoose config
+  config.mongoose = {
+    url: 'mongodb://192.168.18.100:27018/platform',
+  }
+
+  // redis config
+  config.redis = {
+    client: {
+      host: '192.168.18.100', // Redis host
+    },
+  };
+
   config.logger = {
     level: 'DEBUG',
     consoleLevel: 'DEBUG',

@@ -21,7 +21,10 @@ class AuthController extends Controller {
   //       code - url带上code参数重定向到原始地址，默认
   //       store - 认证结果写入sessionStore，然后重定向回请求页面（要求请求页面和认证服务在同一域名下）
   async auth() {
-    const { redirect_uri, response_type = 'code', code } = this.ctx.query;
+    const { redirect_uri, response_type = 'code', code, test } = this.ctx.query;
+    if(test && this.app.config.logger.level === 'DEBUG') {
+      return await this.authTest();
+    }
     if(code) {
       return await this.authBack();
     }
@@ -90,6 +93,27 @@ class AuthController extends Controller {
 
     this.ctx.ok({ userinfo, token });
   }
+
+  // GET 用户授权内部测试接口
+  async authTest() {
+    const { redirect_uri, test, yxdm = '99991' } = this.ctx.query;
+    this.ctx.logger.debug(`[auth-test] reditect_uri - ${redirect_uri}, role - ${test}`);
+    assert(redirect_uri, '回调地址不能为空');
+    
+    const userid = _.get(this.app.config, ['test', test]);
+    if(!userid) {
+      this.ctx.logger.error('[auth-test] 未配置测试用户ID');
+      await this.ctx.render('error.njk', { message: '未配置测试用户ID'});
+      return;
+    }
+
+    const userinfo = {userid: 'test', name: '测试用户', yxdm, role: test};
+    const token = await this.ctx.service.weixin.createJwt(userinfo);
+    const openid = '1234567890';
+
+    await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(userinfo), token, openid, redirect_uri });
+  }
+
 }
 
 module.exports = AuthController;

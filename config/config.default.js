@@ -67,5 +67,10 @@ module.exports = appInfo => {
     },
   };
 
+  config.test = {
+    corp: '5bd233253931128db02d9849',
+    user: 'userid',
+  };
+
   return config;
 };
