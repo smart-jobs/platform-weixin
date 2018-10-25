@@ -75,7 +75,7 @@ class AuthController extends Controller {
   // GET 请求认证
   async fetch() {
     const { code } = this.ctx.query;
-    this.ctx.logger.debug(`[fetch] code - ${code}, state - ${state}`);
+    this.ctx.logger.debug(`[fetch] code - ${code}`);
     assert(code, 'code不能为空');
 
     const tokenKey = `smart:auth:code:${code}`;
