@@ -96,18 +96,19 @@ class AuthController extends Controller {
 
   // GET 用户授权内部测试接口
   async authTest() {
-    const { redirect_uri, test, yxdm = '99991' } = this.ctx.query;
+    const { redirect_uri, test, yxdm } = this.ctx.query;
     this.ctx.logger.debug(`[auth-test] reditect_uri - ${redirect_uri}, role - ${test}`);
     assert(redirect_uri, '回调地址不能为空');
     
-    const userid = _.get(this.app.config, ['test', test]);
+    const role = (test === 'user' || test === 'corp') ? test : 'guest';
+    const userid = role === 'guest' ? 'guest' : _.get(this.app.config, ['test', role]);
     if(!userid) {
       this.ctx.logger.error('[auth-test] 未配置测试用户ID');
       await this.ctx.render('error.njk', { message: '未配置测试用户ID'});
       return;
     }
 
-    const userinfo = {userid: 'test', name: '测试用户', yxdm, role: test};
+    const userinfo = {userid: 'test', name: '测试用户', role, yxdm: (role === 'corp') ? yxdm || '99991' : yxdm};
     const token = await this.ctx.service.weixin.createJwt(userinfo);
     const openid = '1234567890';
 
