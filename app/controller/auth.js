@@ -108,7 +108,7 @@ class AuthController extends Controller {
       return;
     }
 
-    const userinfo = {userid: 'test', name: '测试用户', role, yxdm: (role === 'corp') ? yxdm || '99991' : yxdm};
+    const userinfo = {userid, name: '测试用户', role, yxdm: (role === 'corp') ? yxdm || '99991' : yxdm};
     const token = await this.ctx.service.weixin.createJwt(userinfo);
     const openid = '1234567890';
 
