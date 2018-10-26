@@ -68,6 +68,7 @@ module.exports = appInfo => {
   };
 
   config.test = {
+    enable: true,
     corp: '5bd233253931128db02d9849',
     user: '5bd2520ce8e38ba1e8317ec0',
   };

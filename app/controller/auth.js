@@ -22,7 +22,7 @@ class AuthController extends Controller {
   //       store - 认证结果写入sessionStore，然后重定向回请求页面（要求请求页面和认证服务在同一域名下）
   async auth() {
     const { redirect_uri, response_type = 'code', code, test } = this.ctx.query;
-    if(test && this.app.config.logger.level === 'DEBUG') {
+    if(test && _get(this.app.config, 'test.enable')) {
       return await this.authTest();
     }
     if(code) {
