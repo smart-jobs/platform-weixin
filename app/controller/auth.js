@@ -58,7 +58,7 @@ class AuthController extends Controller {
     assert(code, 'code不能为空');
     assert(state, 'state不能为空');
 
-    const { userinfo, token, openid } = await this.ctx.service.weixin.auth(code);
+    const { userinfo, token, openid } = await this.ctx.service.auth.auth(code);
 
     const key = `smart:auth:state:${state}`;
     const val = await this.app.redis.get(key);
@@ -86,7 +86,7 @@ class AuthController extends Controller {
     if(!token) {
       throw new BusinessError(ErrorCode.SERVICE_FAULT, 'code无效');
     }
-    const userinfo = await this.ctx.service.weixin.decodeJwt(token); 
+    const userinfo = await this.ctx.service.auth.decodeJwt(token); 
     if(!userinfo) {
       throw new BusinessError(ErrorCode.SERVICE_FAULT, 'token无效');
     }
@@ -96,7 +96,7 @@ class AuthController extends Controller {
 
   // GET 用户授权内部测试接口
   async authTest() {
-    const { redirect_uri, test, yxdm } = this.ctx.query;
+    const { redirect_uri, test, unit } = this.ctx.query;
     this.ctx.logger.debug(`[auth-test] reditect_uri - ${redirect_uri}, role - ${test}`);
     assert(redirect_uri, '回调地址不能为空');
     
@@ -108,8 +108,8 @@ class AuthController extends Controller {
       return;
     }
 
-    const userinfo = {userid, name: '测试用户', role, yxdm: (role === 'corp') ? yxdm || '99991' : yxdm};
-    const token = await this.ctx.service.weixin.createJwt(userinfo);
+    const userinfo = {userid, name: '测试用户', role, unit: (role === 'corp') ? unit || '99991' : unit};
+    const token = await this.ctx.service.auth.createJwt(userinfo);
     const openid = '1234567890';
 
     await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(userinfo), token, openid, redirect_uri });

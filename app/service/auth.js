@@ -67,14 +67,14 @@ class WeixinAuthService extends Service {
     await this.app.redis.set(openidKey, openid, 'EX', 600);
 
     // TODO: 查询绑定用户信息
-    // 用户数据格式：{userid: '用户数据id', name: '用户名称', yxdm: '分站标识', role: 'user、corp'}
+    // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
     const bindKey = `smart:auth:bind:${openid}`;
     const val = await this.app.redis.get(bindKey);
     let user;
     if(val) {
       user = JSON.parse(val);
     } else {
-      user = { userid: 'guest', name: '未注册', yxdm: '', role: 'guest' };
+      user = { userid: 'guest', name: '未注册', unit: '', role: 'guest' };
     }
 
     // TODO: 创建并缓存登录凭证
@@ -85,9 +85,9 @@ class WeixinAuthService extends Service {
   }
 
   async createJwt(userinfo) {
-    const { userid, yxdm } = userinfo;
+    const { userid, unit } = userinfo;
     const { secret, expiresIn = '1h', issuer = 'weixin' } = this.config.jwt;
-    const subject = _.isUndefined(yxdm) ? userid : `${userid}@${yxdm}`;
+    const subject = _.isUndefined(unit) ? userid : `${userid}@${unit}`;
     const token = await jwt.sign(userinfo, secret, { expiresIn, issuer, subject });
     return token;
   }
@@ -102,12 +102,24 @@ class WeixinAuthService extends Service {
     }
   }
 
-  async fetchCorp(id, tenant) {
-
+  async bindCorp( { openid, unit, data }) {
+    // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
+    const userinfo = { userid: data.id || data._id, name: data.corpname, unit, role: 'corp' };
+    const bindKey = `smart:auth:bind:${openid}`;
+    
+    await this.app.redis.set(bindKey, JSON.stringfy(userinfo));
+    const token = await this.createJwt(userinfo);
+    return { userinfo, token };
   }
 
-  async fetchUser(id) {
-
+  async bindUser( { openid, data }) {
+    // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
+    const userinfo = { userid: data.id || data._id, name: data.xm, unit: _.get(data, 'enrollment.yxdm'), role: 'user' };
+    const bindKey = `smart:auth:bind:${openid}`;
+    
+    await this.app.redis.set(bindKey, JSON.stringfy(userinfo));
+    const token = await this.createJwt(userinfo);
+    return { userinfo, token };
   }
 
 
