@@ -17,7 +17,7 @@ class MembershipController extends Controller {
     // 创建用户
     const data = await this.service.axios.corp.register({tenant: unit}, req);
     // 保存绑定关系
-    const res = await this.ctx.service.auth.bindCorp({ openid, unit, data: res });
+    const res = await this.ctx.service.auth.bindCorp({ openid, unit, data });
     this.ctx.ok(res);
   }
 
