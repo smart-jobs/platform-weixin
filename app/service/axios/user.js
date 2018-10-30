@@ -8,8 +8,8 @@ const meta = {
     uri: '/register/create',
     method: 'post',
   },
-  update: {
-    uri: '/register/update',
+  enroll: {
+    uri: '/register/enroll',
     method: 'post',
   },
   login: {
