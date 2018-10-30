@@ -96,7 +96,7 @@ class AuthController extends Controller {
 
   // GET 用户授权内部测试接口
   async authTest() {
-    const { redirect_uri, test, unit } = this.ctx.query;
+    const { redirect_uri, test, unit, openid } = this.ctx.query;
     this.ctx.logger.debug(`[auth-test] reditect_uri - ${redirect_uri}, role - ${test}`);
     assert(redirect_uri, '回调地址不能为空');
     
@@ -108,11 +108,27 @@ class AuthController extends Controller {
       return;
     }
 
-    const userinfo = {userid, name: '测试用户', role, unit: (role === 'corp') ? unit || '99991' : unit};
-    const token = await this.ctx.service.auth.createJwt(userinfo);
-    const openid = '1234567890';
+    // TODO: 查询绑定用户信息
+    // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
+    let user;
+    if(openid) {
+      const bindKey = `smart:auth:bind:${openid}`;
+      const val = await this.app.redis.get(bindKey);
+      if(val) {
+        user = JSON.parse(val);
+      } else {
+        user = { userid: 'guest', name: '未注册', unit: '', role: 'guest' };
+      }
+    } else {
+      openid  = '1234567890';
+      user = {userid, name: '测试用户', role, unit: (role === 'corp') ? unit || '99991' : unit};
+    }
 
-    await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(userinfo), token, openid, redirect_uri });
+    
+
+    const token = await this.ctx.service.auth.createJwt(user);
+
+    await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(user), token, openid, redirect_uri });
   }
 
 }
