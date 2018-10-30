@@ -107,7 +107,7 @@ class WeixinAuthService extends Service {
     const userinfo = { userid: data.id || data._id, name: data.corpname, unit, role: 'corp' };
     const bindKey = `smart:auth:bind:${openid}`;
     
-    await this.app.redis.set(bindKey, JSON.stringfy(userinfo));
+    await this.app.redis.set(bindKey, JSON.stringify(userinfo));
     const token = await this.createJwt(userinfo);
     return { userinfo, token };
   }
@@ -117,7 +117,7 @@ class WeixinAuthService extends Service {
     const userinfo = { userid: data.id || data._id, name: data.xm, unit: _.get(data, 'enrollment.yxdm'), role: 'user' };
     const bindKey = `smart:auth:bind:${openid}`;
     
-    await this.app.redis.set(bindKey, JSON.stringfy(userinfo));
+    await this.app.redis.set(bindKey, JSON.stringify(userinfo));
     const token = await this.createJwt(userinfo);
     return { userinfo, token };
   }

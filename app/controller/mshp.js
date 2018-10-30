@@ -74,7 +74,7 @@ class MembershipController extends Controller {
     // 用户登录
     const data = await this.service.axios.user.login({ id }, this.ctx.request.body);
     // 保存绑定关系
-    const res = await this.ctx.service.auth.bindCorp({ openid, data });
+    const res = await this.ctx.service.auth.bindUser({ openid, data });
     this.ctx.ok(res);
   }
 }
