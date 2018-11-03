@@ -31,10 +31,10 @@ class MembershipController extends Controller {
   }
 
   async corp_login() {
-    const { openid, unit, id } = this.ctx.query;
+    const { openid, unit, id, corpname } = this.ctx.query;
     assert(openid, '微信ID不能为空');
     assert(unit, '分站ID不能为空');
-    assert(id, '企业ID不能为空');
+    // assert(id, '企业ID不能为空'); // 可以通过username登录
 
     // 用户登录
     const data = await this.service.axios.corp.login({id, _tenant: unit}, this.ctx.request.body);
