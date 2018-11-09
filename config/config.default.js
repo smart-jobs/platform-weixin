@@ -16,6 +16,14 @@ module.exports = appInfo => {
     },
   };
 
+  config.proxy = true;
+  config.hostHeaders = 'x-forwarded-host';
+
+  // 服务器发布路径
+  config.baseUrl = '';
+  // 认证回调地址
+  config.authUrl = '/auth';
+
   config.errorMongo = {
     details: true,
   };

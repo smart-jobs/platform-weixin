@@ -7,10 +7,10 @@ class HomeController extends Controller {
     this.ctx.body = 'hi, egg!!!!!';
   }
   async demo() {
-    await this.ctx.render('redirect.njk', {redirect_uri: '/info'});
+    await this.ctx.render('subscribe.njk', { appid: this.app.config.wxapi.appid });
   }
   async info() {
-    await this.ctx.render('info.njk', {message: 'this is a demo page'});
+    await this.ctx.render('info.njk', { message: 'this is a demo page' });
   }
   async test() {
     this.ctx.body = 'this is a demo page';
