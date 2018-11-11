@@ -15,9 +15,9 @@ class MembershipController extends Controller {
 
     // 创建用户
     const data = await this.service.axios.corp.createUser({ openid }, this.ctx.request.body);
-    // 保存绑定关系
-    const res = await this.ctx.service.auth.bindCorp({ openid, data });
-    this.ctx.ok(res);
+    // 重新登录
+    const res = await this.ctx.service.auth.loginCorp({ openid });
+    this.ctx.ok({ ...res, newUser: data });
   }
 
   // 【step2】 注册企业名称
@@ -28,12 +28,10 @@ class MembershipController extends Controller {
 
     // 创建企业
     const newCorp = await this.service.axios.corp.register({ openid, _tenant: unit }, this.ctx.request.body);
-    // 重新登录用户
-    await this.corp_login();
-    // 用户登录
-    const { user: data, units } = await this.service.axios.corp.login({ openid }, this.ctx.request.body);
-    // 保存绑定关系
-    const res = await this.ctx.service.auth.bindCorp({ openid, units, data });
+    this.logger.debug(`[corp_register] corp.register result: ${newCorp}`);
+    // 重新登录
+    const res = await this.ctx.service.auth.loginCorp({ openid });
+    this.logger.debug(`[corp_register] auth.loginCorp result: ${res}`);
 
     this.ctx.ok({ ...res, newCorp });
   }
@@ -43,9 +41,7 @@ class MembershipController extends Controller {
     assert(openid, '微信ID不能为空');
 
     // 用户登录
-    const { user: data, units } = await this.service.axios.corp.login({ openid }, this.ctx.request.body);
-    // 保存绑定关系
-    const res = await this.ctx.service.auth.bindCorp({ openid, units, data });
+    const res = await this.ctx.service.auth.loginCorp({ openid });
     this.ctx.ok(res);
   }
 
@@ -56,9 +52,9 @@ class MembershipController extends Controller {
     const req = { ...this.ctx.request.body, account: openid };
     // 创建用户
     const data = await this.service.axios.user.register({}, req);
-    // 保存绑定关系
-    const res = await this.ctx.service.auth.bindUser({ openid, data });
-    this.ctx.ok(res);
+    // 重新登录
+    const res = await this.ctx.service.auth.loginUser({ openid });
+    this.ctx.ok({ ...res, newUser: data });
   }
 
   async user_login() {
@@ -67,9 +63,7 @@ class MembershipController extends Controller {
     assert(id, '用户ID不能为空');
 
     // 用户登录
-    const data = await this.service.axios.user.login({ id }, this.ctx.request.body);
-    // 保存绑定关系
-    const res = await this.ctx.service.auth.bindUser({ openid, data });
+    const res = await this.ctx.service.auth.login({ openid });
     this.ctx.ok(res);
   }
 

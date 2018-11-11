@@ -77,14 +77,14 @@ class WeixinAuthService extends Service {
     // TODO: 查询绑定用户信息
     // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
     const bindKey = `smart:auth:bind:${openid}`;
-    const val = await this.app.redis.get(bindKey);
-    let user;
-    if (val) {
-      user = JSON.parse(val);
-    } else {
-      user = { userid: 'guest', name: '未注册', role: 'guest' };
+    const role = await this.app.redis.get(bindKey);
+    if (role === 'corp') {
+      return await this.loginCorp({ openid });
+    } else if (role === 'user') {
+      return await this.loginUser({ openid });
     }
 
+    const user = { userid: 'guest', name: '未注册', role: 'guest' };
     // TODO: 创建并缓存登录凭证
     const token = await this.createJwt(user);
     return { userinfo: user, token, openid };
@@ -108,29 +108,41 @@ class WeixinAuthService extends Service {
     }
   }
 
-  async bindCorp({ openid, units, data, unit }) {
-    // 用户数据格式：{userid: '用户id', name: '用户名称', corpid: '企业id', corpname: '企业名称',
-    // unit: '分站标识', role: 'user、corp'}
-    const userinfo = { userid: data.id || data._id, name: data.name,
-      corpid: data.corpid, corpname: data.corpname, unit, units, role: 'corp' };
+  async bindRole({ openid, role }) {
+    // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
     const bindKey = `smart:auth:bind:${openid}`;
+    await this.app.redis.set(bindKey, role);
+  }
 
-    await this.app.redis.set(bindKey, JSON.stringify(userinfo));
+  async loginCorp({ openid }) {
+    const res = await this.service.axios.corp.login({ openid }, this.ctx.request.body);
+    this.logger.debug(`[loginCorp] corp.login result: ${res}`);
+
+    const { user: data, units } = res;
+    const userinfo = { userid: data.id || data._id, name: data.name,
+      corpid: data.corpid, corpname: data.corpname, unit: units && units[0], units, role: 'corp' };
+
     const token = await this.createJwt(userinfo);
+
+    // 保存绑定关系
+    await this.bindRole({ openid, role: 'corp' });
+
     return { userinfo, token };
   }
 
-  async bindUser({ openid, data }) {
+  async loginUser({ openid, data }) {
+    const res = await this.service.axios.user.login({ openid }, this.ctx.request.body);
+    this.logger.debug(`[loginUser] user.login result: ${res}`);
+
     // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
     const userinfo = { userid: data.id || data._id, name: data.xm, unit: _.get(data, 'enrollment.yxdm'), role: 'user' };
-    const bindKey = `smart:auth:bind:${openid}`;
-
-    await this.app.redis.set(bindKey, JSON.stringify(userinfo));
     const token = await this.createJwt(userinfo);
+
+    // 保存绑定关系
+    await this.bindRole({ openid, role: 'user' });
+
     return { userinfo, token };
   }
-
-
 }
 
 module.exports = WeixinAuthService;
