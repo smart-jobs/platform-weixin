@@ -21,11 +21,13 @@
     var token = '{{token | safe}}';
     var user = '{{userinfo | safe}}';
     var openid = '{{openid | safe}}';
+    var nickname = '{{nickname | safe}}';
 
     window.onload = function() {
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('user', user);
       sessionStorage.setItem('openid', openid);
+      sessionStorage.setItem('nickname', nickname);
       window.location.replace(redirect_uri);
     }
   </script>

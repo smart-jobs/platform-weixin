@@ -4,7 +4,8 @@ module.exports = () => {
   const config = exports = {};
 
   // 认证回调地址
-  config.authUrl = '/www/weixin/auth', 
+  config.authUrl = '/www/weixin/auth';
+
   // wxapi config
   config.wxapi = {
     appid: 'wx0a4d3e220354c906', // 微信公众号APPID

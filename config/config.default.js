@@ -16,6 +16,14 @@ module.exports = appInfo => {
     },
   };
 
+  config.proxy = true;
+  config.hostHeaders = 'x-forwarded-host';
+
+  // 服务器发布路径
+  config.baseUrl = '';
+  // 认证回调地址
+  config.authUrl = '/auth';
+
   config.errorMongo = {
     details: true,
   };
@@ -69,8 +77,6 @@ module.exports = appInfo => {
 
   config.test = {
     enable: true,
-    corp: '5bd233253931128db02d9849',
-    user: '5bd2520ce8e38ba1e8317ec0',
   };
 
   // axios service config

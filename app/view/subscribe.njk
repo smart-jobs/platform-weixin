@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>未关注公众号</title>
+  <meta charset="utf-8"></meta>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0"></meta>
+  <link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css"></link>
+</head>
+
+<body>
+  <div class="weui-msg">
+    <div class="weui-msg__icon-area"><i class="weui-icon-info weui-icon_msg"></i></div>
+    <div class="weui-msg__text-area">
+      <h2 class="weui-msg__title">未关注公众号</h2>
+      <p class="weui-msg__desc">请识别二维码关注公众号</p>
+      {% if appid %}
+      <img src="public/qrcode_for_{{appid}}.jpg" width="70%">
+      {% endif %}
+    </div>
+  </div>
+</body>
+
+</html>

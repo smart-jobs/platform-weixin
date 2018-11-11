@@ -8,38 +8,44 @@ class MembershipController extends Controller {
     this.ctx.body = 'this is a demo page';
   }
 
+  // 【step1】 创建微信用户
+  async corp_createUser() {
+    const { openid } = this.ctx.query;
+    assert(openid, '微信ID不能为空');
+
+    // 创建用户
+    const data = await this.service.axios.corp.createUser({ openid }, this.ctx.request.body);
+    // 保存绑定关系
+    const res = await this.ctx.service.auth.bindCorp({ openid, data });
+    this.ctx.ok(res);
+  }
+
+  // 【step2】 注册企业名称
   async corp_register() {
     const { unit, openid } = this.ctx.query;
     assert(unit, '分站ID不能为空');
     assert(openid, '微信ID不能为空');
 
-    const req = { ...this.ctx.request.body, account: openid };
-    // 创建用户
-    const data = await this.service.axios.corp.register({_tenant: unit}, req);
+    // 创建企业
+    const newCorp = await this.service.axios.corp.register({ openid, _tenant: unit }, this.ctx.request.body);
+    // 重新登录用户
+    await this.corp_login();
+    // 用户登录
+    const { user: data, units } = await this.service.axios.corp.login({ openid }, this.ctx.request.body);
     // 保存绑定关系
-    const res = await this.ctx.service.auth.bindCorp({ openid, unit, data });
-    this.ctx.ok(res);
-  }
+    const res = await this.ctx.service.auth.bindCorp({ openid, units, data });
 
-  async corp_complete() {
-    const { unit, id } = this.ctx.query;
-    assert(unit, '分站ID不能为空');
-    assert(id, '企业ID不能为空');
-
-    const res = await this.service.axios.corp.complete({id, _tenant: unit}, this.ctx.request.body);
-    this.ctx.ok({ data: res });
+    this.ctx.ok({ ...res, newCorp });
   }
 
   async corp_login() {
-    const { openid, unit, id, corpname } = this.ctx.query;
+    const { openid } = this.ctx.query;
     assert(openid, '微信ID不能为空');
-    assert(unit, '分站ID不能为空');
-    // assert(id, '企业ID不能为空'); // 可以通过username登录
 
     // 用户登录
-    const data = await this.service.axios.corp.login({id, _tenant: unit}, this.ctx.request.body);
+    const { user: data, units } = await this.service.axios.corp.login({ openid }, this.ctx.request.body);
     // 保存绑定关系
-    const res = await this.ctx.service.auth.bindCorp({ openid, unit, data });
+    const res = await this.ctx.service.auth.bindCorp({ openid, units, data });
     this.ctx.ok(res);
   }
 
@@ -55,17 +61,6 @@ class MembershipController extends Controller {
     this.ctx.ok(res);
   }
 
-  async user_enroll() {
-    const { openid, id } = this.ctx.query;
-    assert(openid, '微信ID不能为空');
-    assert(id, '用户ID不能为空');
-
-    const data = await this.service.axios.user.enroll({ id }, this.ctx.request.body);
-    // 保存绑定关系
-    const res = await this.ctx.service.auth.bindUser({ openid, data });
-    this.ctx.ok(res);
-  }
-
   async user_login() {
     const { openid, id } = this.ctx.query;
     assert(openid, '微信ID不能为空');
@@ -75,6 +70,15 @@ class MembershipController extends Controller {
     const data = await this.service.axios.user.login({ id }, this.ctx.request.body);
     // 保存绑定关系
     const res = await this.ctx.service.auth.bindUser({ openid, data });
+    this.ctx.ok(res);
+  }
+
+  // 通过微信ID登录已绑定的用户
+  async weixin_login() {
+    const { openid } = this.ctx.query;
+    assert(openid, '微信ID不能为空');
+
+    const res = await this.ctx.service.auth.login(openid);
     this.ctx.ok(res);
   }
 }
