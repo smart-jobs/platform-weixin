@@ -116,7 +116,7 @@ class WeixinAuthService extends Service {
 
   async loginCorp({ openid }) {
     const res = await this.service.axios.corp.login({ openid }, this.ctx.request.body);
-    this.logger.debug(`[loginCorp] corp.login result: ${res}`);
+    this.logger.debug('[loginCorp] corp.login result: ', res);
 
     const { user: data, units } = res;
     const userinfo = { userid: data.id || data._id, name: data.name,
@@ -132,7 +132,7 @@ class WeixinAuthService extends Service {
 
   async loginUser({ openid, data }) {
     const res = await this.service.axios.user.login({ openid }, this.ctx.request.body);
-    this.logger.debug(`[loginUser] user.login result: ${res}`);
+    this.logger.debug('[loginUser] user.login result: ', res);
 
     // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
     const userinfo = { userid: data.id || data._id, name: data.xm, unit: _.get(data, 'enrollment.yxdm'), role: 'user' };
