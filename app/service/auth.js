@@ -109,7 +109,8 @@ class WeixinAuthService extends Service {
   }
 
   async bindCorp({ openid, units, data, unit }) {
-    // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
+    // 用户数据格式：{userid: '用户id', name: '用户名称', corpid: '企业id', corpname: '企业名称',
+    // unit: '分站标识', role: 'user、corp'}
     const userinfo = { userid: data.id || data._id, name: data.name,
       corpid: data.corpid, corpname: data.corpname, unit, units, role: 'corp' };
     const bindKey = `smart:auth:bind:${openid}`;

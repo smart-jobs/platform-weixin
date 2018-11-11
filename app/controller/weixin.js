@@ -90,28 +90,33 @@ class WeixinController extends Controller {
     }
     const { redirect_uri } = JSON.parse(val);
 
-    // TODO: 生成Jwt
-    const token = await weixin.createJwt({ openid, nickname, subscribe });
+    // TODO: 生成weixin Jwt
+    const wxtoken = await weixin.createJwt({ openid, nickname, subscribe });
     // TODO: 写入cookie
-    this.ctx.cookies.set('wxtoken', token, { maxAge: 3600000, overwrite: true, signed: false });
+    this.ctx.cookies.set('wxtoken', wxtoken, { maxAge: 3600000, overwrite: true, signed: false });
+
+    // TODO: 微信用户登录
+    const { userinfo, token } = await this.ctx.service.auth.login(openid);
 
     // TODO: 重定性到原始请求页面
-    await this.ctx.render('redirect.njk', { userinfo: JSON.stringify({ openid, nickname, subscribe }), token, openid, redirect_uri });
+    await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(userinfo), token, openid, redirect_uri });
   }
 
   // GET 用户授权内部测试接口
   async authTest() {
-    const { redirect_uri, openid, nickname = '测试', subscribe = 1 } = this.ctx.query;
+    const { redirect_uri, test: openid, nickname = '测试', subscribe = 1 } = this.ctx.query;
     this.ctx.logger.debug(`[auth-test] reditect_uri - ${redirect_uri}, openid - ${openid}`);
     assert(redirect_uri, '回调地址不能为空');
     assert(openid, 'openid不能为空');
 
     // TODO: 生成Jwt
-    const userinfo = { openid, nickname, subscribe };
     const { weixin } = this.ctx.service;
-    const token = await weixin.createJwt({ openid, nickname, subscribe });
+    const wxtoken = await weixin.createJwt({ openid, nickname, subscribe });
     // TODO: 写入cookie
-    this.ctx.cookies.set('wxtoken', token, { maxAge: 3600000, overwrite: true, signed: false });
+    this.ctx.cookies.set('wxtoken', wxtoken, { maxAge: 3600000, overwrite: true, signed: false });
+
+    // TODO: 微信用户登录
+    const { userinfo, token } = await this.ctx.service.auth.login(openid);
 
     await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(userinfo), token, openid, nickname, redirect_uri });
   }

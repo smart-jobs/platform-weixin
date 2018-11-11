@@ -27,9 +27,15 @@ class MembershipController extends Controller {
     assert(openid, '微信ID不能为空');
 
     // 创建企业
-    await this.service.axios.corp.register({ openid, _tenant: unit }, this.ctx.request.body);
+    const newCorp = await this.service.axios.corp.register({ openid, _tenant: unit }, this.ctx.request.body);
     // 重新登录用户
     await this.corp_login();
+    // 用户登录
+    const { user: data, units } = await this.service.axios.corp.login({ openid }, this.ctx.request.body);
+    // 保存绑定关系
+    const res = await this.ctx.service.auth.bindCorp({ openid, units, data });
+
+    this.ctx.ok({ ...res, newCorp });
   }
 
   async corp_login() {
