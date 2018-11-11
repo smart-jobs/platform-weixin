@@ -4,7 +4,7 @@ const _ = require('lodash');
 const { AxiosService } = require('naf-framework-mongoose/lib/service');
 
 const meta = {
-  createUser: {
+  create: {
     uri: '/user/create',
     method: 'post',
   },

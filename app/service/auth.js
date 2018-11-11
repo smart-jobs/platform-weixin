@@ -130,17 +130,19 @@ class WeixinAuthService extends Service {
     return { userinfo, token };
   }
 
-  async loginUser({ openid, data }) {
+  async loginUser({ openid }) {
     const res = await this.service.axios.user.login({ openid }, this.ctx.request.body);
     this.logger.debug('[loginUser] user.login result: ', res);
 
+    const { user: data, reg } = res;
     // 用户数据格式：{userid: '用户数据id', name: '用户名称', unit: '分站标识', role: 'user、corp'}
-    const userinfo = { userid: data.id || data._id, name: data.xm, unit: _.get(data, 'enrollment.yxdm'), role: 'user' };
+    const userinfo = { userid: data.userid, name: data.name, unit: _.get(reg, '_tenant'), role: 'user' };
     const token = await this.createJwt(userinfo);
 
     // 保存绑定关系
     await this.bindRole({ openid, role: 'user' });
 
+    userinfo.reg = reg;
     return { userinfo, token };
   }
 }

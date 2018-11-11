@@ -45,6 +45,19 @@ class MembershipController extends Controller {
     this.ctx.ok(res);
   }
 
+  // 【step1】 创建微信账号并注册学籍
+  async user_create() {
+    const { openid } = this.ctx.query;
+    assert(openid, '微信ID不能为空');
+
+    // 创建用户
+    const data = await this.service.axios.user.create({ openid }, this.ctx.request.body);
+    // 重新登录
+    const res = await this.ctx.service.auth.loginUser({ openid });
+    this.ctx.ok({ ...res, newUser: data });
+  }
+
+  // 【step2】 注册学籍信息
   async user_register() {
     const { openid } = this.ctx.query;
     assert(openid, '微信ID不能为空');
@@ -54,7 +67,7 @@ class MembershipController extends Controller {
     const data = await this.service.axios.user.register({}, req);
     // 重新登录
     const res = await this.ctx.service.auth.loginUser({ openid });
-    this.ctx.ok({ ...res, newUser: data });
+    this.ctx.ok({ ...res, newReg: data });
   }
 
   async user_login() {
