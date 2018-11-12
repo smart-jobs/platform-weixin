@@ -99,7 +99,7 @@ class WeixinController extends Controller {
     const { userinfo, token } = await this.ctx.service.auth.login(openid);
 
     // TODO: 重定性到原始请求页面
-    await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(userinfo), token, openid, redirect_uri });
+    await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(userinfo), token, openid, nickname, redirect_uri });
   }
 
   // GET 用户授权内部测试接口
