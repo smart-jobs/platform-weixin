@@ -4,7 +4,7 @@ module.exports = () => {
   const config = exports = {};
 
   // 认证回调地址
-  config.authUrl = '/www/weixin/auth';
+  config.authUrl = '/weixin/auth';
 
   // wxapi config
   // config.wxapi = {

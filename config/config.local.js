@@ -10,7 +10,7 @@ module.exports = () => {
   };
 
   // 服务器发布路径
-  config.baseUrl = '/www/weixin';
+  config.baseUrl = '/weixin';
   // 认证回调地址
   config.authUrl = `${config.baseUrl}/auth`;
 
