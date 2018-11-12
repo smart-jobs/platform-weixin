@@ -28,10 +28,10 @@ class MembershipController extends Controller {
 
     // 创建企业
     const newCorp = await this.service.axios.corp.register({ openid, _tenant: unit }, this.ctx.request.body);
-    this.logger.debug(`[corp_register] corp.register result: ${newCorp}`);
+    // this.logger.debug(`[corp_register] corp.register result: ${newCorp}`);
     // 重新登录
     const res = await this.ctx.service.auth.loginCorp({ openid });
-    this.logger.debug(`[corp_register] auth.loginCorp result: ${res}`);
+    // this.logger.debug(`[corp_register] auth.loginCorp result: ${res}`);
 
     this.ctx.ok({ ...res, newCorp });
   }
