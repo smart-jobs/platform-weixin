@@ -59,24 +59,22 @@ class MembershipController extends Controller {
 
   // 【step2】 注册学籍信息
   async user_register() {
-    const { openid } = this.ctx.query;
+    const { openid, _tenant } = this.ctx.query;
     assert(openid, '微信ID不能为空');
 
-    const req = { ...this.ctx.request.body, account: openid };
     // 创建用户
-    const data = await this.service.axios.user.register({}, req);
+    const data = await this.service.axios.user.register({ openid, _tenant }, this.ctx.request.body);
     // 重新登录
     const res = await this.ctx.service.auth.loginUser({ openid });
     this.ctx.ok({ ...res, newReg: data });
   }
 
   async user_login() {
-    const { openid, id } = this.ctx.query;
+    const { openid } = this.ctx.query;
     assert(openid, '微信ID不能为空');
-    assert(id, '用户ID不能为空');
 
     // 用户登录
-    const res = await this.ctx.service.auth.login({ openid });
+    const res = await this.ctx.service.auth.loginUser({ openid });
     this.ctx.ok(res);
   }
 

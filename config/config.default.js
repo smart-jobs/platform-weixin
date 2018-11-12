@@ -64,8 +64,8 @@ module.exports = appInfo => {
   // JWT config
   config.jwt = {
     secret: 'Ziyouyanfa!@#',
-    expiresIn: '1h',
-    subject: 'platform',
+    expiresIn: '1d',
+    subject: 'weixin',
   };
 
   config.view = {

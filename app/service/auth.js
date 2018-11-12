@@ -91,8 +91,8 @@ class WeixinAuthService extends Service {
   }
 
   async createJwt(userinfo) {
-    const { userid, unit } = userinfo;
-    const { secret, expiresIn = '1h', issuer = 'weixin' } = this.config.jwt;
+    const { userid = 'guest', unit } = userinfo;
+    const { secret, expiresIn = '1d', issuer = 'weixin' } = this.config.jwt;
     const subject = _.isUndefined(unit) ? userid : `${userid}@${unit}`;
     const token = await jwt.sign(userinfo, secret, { expiresIn, issuer, subject });
     return token;
