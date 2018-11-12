@@ -14,7 +14,7 @@ class MembershipController extends Controller {
     assert(openid, '微信ID不能为空');
 
     // 创建用户
-    const data = await this.service.axios.corp.createUser({ openid }, this.ctx.request.body);
+    const data = await this.service.axios.corp.create({ openid }, this.ctx.request.body);
     // 重新登录
     const res = await this.ctx.service.auth.loginCorp({ openid });
     this.ctx.ok({ ...res, newUser: data });
