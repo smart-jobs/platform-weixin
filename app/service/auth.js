@@ -3,6 +3,7 @@
 const assert = require('assert');
 const _ = require('lodash');
 const { BusinessError, ErrorCode } = require('naf-core').Error;
+const { isNullOrUndefined } = require('naf-core').Util;
 const jwt = require('jsonwebtoken');
 const Service = require('egg').Service;
 const axios = require('axios');
@@ -91,9 +92,10 @@ class WeixinAuthService extends Service {
   }
 
   async createJwt(userinfo) {
-    const { userid = 'guest', unit } = userinfo;
+    let { userid, unit } = userinfo;
+    if (isNullOrUndefined(userid)) userid = 'guest';
     const { secret, expiresIn = '1d', issuer = 'weixin' } = this.config.jwt;
-    const subject = _.isUndefined(unit) ? userid : `${userid}@${unit}`;
+    const subject = isNullOrUndefined(unit) ? userid : `${userid}@${unit}`;
     const token = await jwt.sign(userinfo, secret, { expiresIn, issuer, subject });
     return token;
   }
