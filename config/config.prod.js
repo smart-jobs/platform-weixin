@@ -29,7 +29,7 @@ module.exports = () => {
   };
 
   config.logger = {
-    level: 'DEBUG',
+    // level: 'DEBUG',
     // consoleLevel: 'DEBUG',
   };
 
