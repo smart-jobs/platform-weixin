@@ -18,7 +18,7 @@ class WeixinAuthService extends AxiosService {
     // TODO:参数检查和默认参数处理
     assert(code);
     const { wxapi } = this.app.config;
-    let res = await this.request('/api/fetch', { code });
+    let res = await this.httpGet('/api/fetch', { code });
     if (res.errcode && res.errcode !== 0) {
       this.ctx.logger.error(`[WeixinAuthService] fetch open by code fail, errcode: ${res.errcode}, errmsg: ${res.errmsg}`);
       throw new BusinessError(ErrorCode.SERVICE_FAULT, '获得微信认证信息失败');
@@ -26,7 +26,7 @@ class WeixinAuthService extends AxiosService {
     const { openid } = res;
 
     // TODO: 获得用户信息
-    res = await this.request('/api.weixin.qq.com/cgi-bin/user/info?lang=zh_CN',
+    res = await this.httpGet('/api.weixin.qq.com/cgi-bin/user/info?lang=zh_CN',
       { appid: wxapi.appid, openid });
     // console.debug('res: ', res);
     if (res.errcode && res.errcode !== 0) {
