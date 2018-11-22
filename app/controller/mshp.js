@@ -14,7 +14,7 @@ class MembershipController extends Controller {
     assert(openid, '微信ID不能为空');
 
     // 创建用户
-    const data = await this.service.axios.corp.create({ openid }, this.ctx.request.body);
+    const data = await this.service.axios.corp.create(this.ctx.request.body, { params: { openid } });
     // 重新登录
     const res = await this.ctx.service.auth.loginCorp({ openid });
     this.ctx.ok({ ...res, newUser: data });
@@ -27,7 +27,7 @@ class MembershipController extends Controller {
     assert(openid, '微信ID不能为空');
 
     // 创建企业
-    const newCorp = await this.service.axios.corp.register({ openid, _tenant: unit }, this.ctx.request.body);
+    const newCorp = await this.service.axios.corp.register(this.ctx.request.body, { params: { openid, _tenant: unit } });
     // this.logger.debug(`[corp_register] corp.register result: ${newCorp}`);
     // 重新登录
     const res = await this.ctx.service.auth.loginCorp({ openid });
@@ -51,7 +51,7 @@ class MembershipController extends Controller {
     assert(openid, '微信ID不能为空');
 
     // 创建用户
-    const data = await this.service.axios.user.create({ openid }, this.ctx.request.body);
+    const data = await this.service.axios.user.create(this.ctx.request.body, { params: { openid } });
     // 重新登录
     const res = await this.ctx.service.auth.loginUser({ openid });
     this.ctx.ok({ ...res, newUser: data });
@@ -63,7 +63,7 @@ class MembershipController extends Controller {
     assert(openid, '微信ID不能为空');
 
     // 创建用户
-    const data = await this.service.axios.user.register({ openid, _tenant }, this.ctx.request.body);
+    const data = await this.service.axios.user.register(this.ctx.request.body, { params: { openid, _tenant } });
     // 重新登录
     const res = await this.ctx.service.auth.loginUser({ openid });
     this.ctx.ok({ ...res, newReg: data });
