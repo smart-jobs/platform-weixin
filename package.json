@@ -15,7 +15,7 @@
     "egg-view-nunjucks": "^2.2.0",
     "jsonwebtoken": "^8.4.0",
     "lodash": "^4.17.11",
-    "naf-framework-mongoose": "^0.5.16",
+    "naf-framework-mongoose": "^0.5.17",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
