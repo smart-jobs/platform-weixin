@@ -36,6 +36,7 @@
 		</div>
 	</div>
 	<script type="text/javascript" th:inline="javascript">
+    var token = '{{token | safe}}';
 		var app = new Vue({
 			delimiters: ['${', '}'],
 			el : '#app',
@@ -47,7 +48,7 @@
 				login : function() {
 					if(this.loading) return;
 					this.loading = true;
-					$.post('login')
+					$.post('login', { token: token })
 					.then(function(result) {
 						console.log(result);
 						if (result.status == 0) {

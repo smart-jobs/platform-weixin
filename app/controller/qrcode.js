@@ -49,7 +49,7 @@ class QrcodeController extends Controller {
       return;
     }
 
-    await this.ctx.render('login.njk', { message: '扫码登录测试', accout: '测试' });
+    await this.ctx.render('login.njk', { message: '扫码登录确认', token });
   }
 
   // POST 换取微信认证token
