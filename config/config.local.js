@@ -26,6 +26,14 @@ module.exports = () => {
     },
   };
 
+  // mq config
+  config.amqp = {
+    client: {
+      hostname: '192.168.18.100',
+      // hostname: '192.168.1.190',
+    },
+  };
+
   config.logger = {
     level: 'DEBUG',
     consoleLevel: 'DEBUG',

@@ -53,6 +53,18 @@ module.exports = appInfo => {
     },
   };
 
+  // mq config
+  config.amqp = {
+    client: {
+      hostname: '127.0.0.1',
+      username: 'smart',
+      password: 'smart123',
+      vhost: 'smart',
+    },
+    app: true,
+    agent: true,
+  };
+
   // 安全配置
   config.security = {
     csrf: {

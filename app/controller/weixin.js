@@ -3,6 +3,7 @@
 const assert = require('assert');
 const _ = require('lodash');
 const uuid = require('uuid');
+const urljoin = require('url-join');
 const Controller = require('egg').Controller;
 
 /**
@@ -19,10 +20,11 @@ class WeixinController extends Controller {
    */
   // GET 请求认证
   // response_type:
-  //       code - url带上code参数重定向到原始地址，默认
-  //       store - 认证结果写入sessionStore，然后重定向回请求页面（要求请求页面和认证服务在同一域名下）
+  //       code - url带上code参数重定向到原始地址
+  //       store - 默认，认证结果写入sessionStore，然后重定向回请求页面（要求请求页面和认证服务在同一域名下）
+  //       token - url带上token参数重定向到原始地址
   async auth() {
-    const { redirect_uri, code, test } = this.ctx.query;
+    const { redirect_uri, code, test, response_type = 'store' } = this.ctx.query;
     if (test && _.get(this.app.config, 'test.enable')) {
       return await this.authTest();
     }
@@ -36,7 +38,7 @@ class WeixinController extends Controller {
     // TODO: 保存原始请求地址
     const state = uuid();
     const key = `smart:auth:state:${state}`;
-    const val = JSON.stringify({ redirect_uri });
+    const val = JSON.stringify({ redirect_uri, response_type });
     await this.app.redis.set(key, val, 'EX', 600);
 
     // const { config } = this.app;
@@ -88,18 +90,25 @@ class WeixinController extends Controller {
       await this.ctx.render('error.njk', { message: 'state无效' });
       return;
     }
-    const { redirect_uri } = JSON.parse(val);
+    const { redirect_uri, response_type = 'store' } = JSON.parse(val);
 
     // TODO: 生成weixin Jwt
     const wxtoken = await weixin.createJwt({ openid, nickname, subscribe });
     // TODO: 写入cookie
     this.ctx.cookies.set('wxtoken', wxtoken, { maxAge: 3600000, overwrite: true, signed: false });
 
-    // TODO: 微信用户登录
-    const { userinfo, token } = await this.ctx.service.auth.login(openid);
-
-    // TODO: 重定性到原始请求页面
-    await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(userinfo), token, openid, nickname, redirect_uri });
+    if (response_type === 'token') {
+      const to_uri = urljoin(redirect_uri, `token=${wxtoken}`, '#wechat');
+      // TODO: 重定性到原始请求页面
+      this.ctx.redirect(to_uri);
+    } else if (response_type === 'code') {
+      //
+    } else { // 默认：store
+      // TODO: 微信用户登录
+      const { userinfo, token } = await this.ctx.service.auth.login(openid);
+      // TODO: 重定性到跳转页面
+      await this.ctx.render('redirect.njk', { userinfo: JSON.stringify(userinfo), token, openid, nickname, redirect_uri });
+    }
   }
 
   // GET 用户授权内部测试接口

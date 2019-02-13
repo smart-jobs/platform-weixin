@@ -1,0 +1,20 @@
+.weui-prompt-box {
+    margin-top: 10px;
+}
+.weui-prompt-input {
+    padding: 4px 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    height: 2em;
+    width: 85%;
+}
+.weui-prompt-input.hasbtn {
+    width: 55% !important;
+}
+.weui-prompt-button  {
+	margin-left: 2%;
+	width: 28% !important;
+	padding: 0;
+	white-space: nowrap;
+	vertical-align: middle;
+}
