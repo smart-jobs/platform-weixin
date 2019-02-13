@@ -98,7 +98,7 @@ class WeixinController extends Controller {
     this.ctx.cookies.set('wxtoken', wxtoken, { maxAge: 3600000, overwrite: true, signed: false });
 
     if (response_type === 'token') {
-      const to_uri = urljoin(redirect_uri, `token=${wxtoken}`, '#wechat');
+      const to_uri = urljoin(redirect_uri, `?token=${wxtoken}`, '#wechat');
       // TODO: 重定性到原始请求页面
       this.ctx.redirect(to_uri);
     } else if (response_type === 'code') {
