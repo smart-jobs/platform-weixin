@@ -38,9 +38,11 @@ class QrcodeController extends Controller {
     // TODO: 获得微信认证token
     const token = this.ctx.query.token || this.ctx.cookies.get('wxtoken');
     if (!token) {
+      this.ctx.logger.debug('【originalUrl】', this.ctx.originalUrl);
       // TODO: 跳转到授权地址
+      const { baseUrl } = this.app.config;
       const { authUrl = this.ctx.path } = this.app.config;
-      const backUrl = encodeURI(this.ctx.originalUrl);
+      const backUrl = encodeURI(`${baseUrl}${this.ctx.originalUrl}`);
       const to_uri = `${authUrl}?response_type=token&redirect_uri=${backUrl}#wechat`;
 
       this.ctx.redirect(to_uri);

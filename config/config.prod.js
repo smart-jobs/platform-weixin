@@ -3,6 +3,8 @@
 module.exports = () => {
   const config = exports = {};
 
+  // 服务器发布路径
+  config.baseUrl = '/weixin';
   // 认证回调地址
   config.authUrl = '/weixin/auth';
 
