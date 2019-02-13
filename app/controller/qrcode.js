@@ -40,12 +40,7 @@ class QrcodeController extends Controller {
     if (!token) {
       // TODO: 跳转到授权地址
       const { authUrl = this.ctx.path } = this.app.config;
-      let backUrl;
-      if (authUrl.startsWith('http')) {
-        backUrl = encodeURI(this.ctx.originalUrl);
-      } else {
-        backUrl = encodeURI(this.ctx.path);
-      }
+      const backUrl = encodeURI(this.ctx.originalUrl);
       const to_uri = `${authUrl}?response_type=token&redirect_uri=${backUrl}#wechat`;
 
       this.ctx.redirect(to_uri);
