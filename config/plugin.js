@@ -4,7 +4,7 @@
 // exports.static = true;
 
 exports.amqp = {
-  enable: false,
+  enable: true,
   package: 'egg-naf-amqp',
 };
 
