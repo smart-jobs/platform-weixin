@@ -25,7 +25,7 @@
 			<h2 class="weui-msg__title">
 				你确定要登录智慧就业网站吗？
 			</h2>
-			<p class="weui-msg__desc">{{message}}</p>
+			<p class="weui-msg__desc">${message}</p>
 		</div>
 		<div class="weui-msg__opr-area" v-if="view == 'login'">
 			<p class="weui-btn-area">
@@ -43,6 +43,7 @@
 			data : {
 				loading : false,
 				view: 'login',
+				message: '{{ message| safe }}',
 			},
 			methods : {
 				login : function() {
@@ -51,18 +52,19 @@
 					$.post('login', { token: token })
 					.then(function(result) {
 						console.log(result);
-						if (result.status == 0) {
+						if (result.errcode == 0) {
 							showAlert('你已成功通过微信扫码登录智慧就业平台。', '微信登录成功', function(){
 								app.view = 'success';
 							});
 						} else {
-							return $.Deferred().reject(result.message); 
+							return $.Deferred().reject(result.errmsg); 
 						}
 					}).fail(function( jqXHR, textStatus, errorThrown ) {
-						var msg = "登录失败！";
+						var msg = "处理失败，请稍后重试！";
 						if(typeof jqXHR == "string")
 							msg = jqXHR;
-						showAlert(msg);
+						showAlert(msg, '登录失败');
+						app.message = msg;
 					}).always(function(){
 						app.loading = false;
 					});
