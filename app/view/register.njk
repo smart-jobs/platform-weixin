@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>用户注册</title>
+  <meta charset="utf-8"></meta>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0"></meta>
+  <link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css"></link>
+	<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+</head>
+
+<body>
+  <div class="weui-msg">
+    <div class="weui-msg__icon-area"><i class="weui-icon-info weui-icon_msg"></i></div>
+    <div class="weui-msg__text-area">
+      <h2 class="weui-msg__title">尚未完成注册</h2>
+      <p class="weui-msg__desc">{{ message | d("请先完成用户注册流程，再重新扫码登录。")}}</p>
+    </div>
+		<div class="weui-msg__opr-area" v-if="view == 'login'">
+			<p class="weui-btn-area">
+				<a href="/weixin/ui/center/index.html" class="weui-btn weui-btn_primary">前往用户注册</a> 
+				<a href="javascript: wx.closeWindow();" class="weui-btn weui-btn_default">取消</a>
+			</p>
+		</div>
+  </div>
+</body>
+
+</html>

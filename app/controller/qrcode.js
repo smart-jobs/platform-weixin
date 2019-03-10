@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const Controller = require('egg').Controller;
+const jwt = require('jsonwebtoken');
 
 /**
  * 微信扫码登录
@@ -46,6 +47,13 @@ class QrcodeController extends Controller {
       const to_uri = `${authUrl}?response_type=token&redirect_uri=${backUrl}#wechat`;
 
       this.ctx.redirect(to_uri);
+      return;
+    }
+
+    const { subject: openid } = jwt.decode(token);
+    const { userinfo } = await this.ctx.service.auth.login(openid);
+    if (userinfo.role === 'guest') {
+      await this.ctx.render('register.njk', { message: '请先完成用户注册流程，再重新扫码登录。' });
       return;
     }
 
