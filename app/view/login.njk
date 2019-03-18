@@ -19,7 +19,14 @@
 <body>
 	<div class="weui-msg" id="app">
 		<div class="weui-msg__icon-area">
-			<i class="weui-icon-waiting weui-icon_msg"></i>
+			<i class="weui-icon-waiting weui-icon_msg" v-if="view == 'success'"></i>
+			<i class="weui-icon-waiting weui-icon_msg" v-else></i>
+		</div>
+		<div class="weui-msg__text-area" v-if="view == 'success'">
+			<h2 class="weui-msg__title">
+				微信登录成功
+			</h2>
+			<p class="weui-msg__desc">您已成功通过微信扫码登录智慧就业平台。</p>
 		</div>
 		<div class="weui-msg__text-area" v-if="view == 'login'">
 			<h2 class="weui-msg__title">
@@ -53,7 +60,7 @@
 					.then(function(result) {
 						console.log(result);
 						if (result.errcode == 0) {
-							showAlert('你已成功通过微信扫码登录智慧就业平台。', '微信登录成功', function(){
+							showAlert('您已成功通过微信扫码登录智慧就业平台。', '微信登录成功', function(){
 								app.view = 'success';
 							});
 						} else {
