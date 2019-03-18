@@ -50,12 +50,13 @@ class QrcodeController extends Controller {
       return;
     }
 
-    // const { subject: openid } = jwt.decode(token);
-    // const { userinfo } = await this.ctx.service.auth.login(openid);
-    // if (userinfo.role === 'guest') {
-    //   await this.ctx.render('register.njk', { message: '请先完成用户注册流程，再重新扫码登录。' });
-    //   return;
-    // }
+    const { sub: openid } = jwt.decode(token);
+    const { userinfo } = await this.ctx.service.auth.login(openid);
+    console.log('userinfo:', userinfo);
+    if (userinfo.role === 'guest') {
+      await this.ctx.render('register.njk', { message: '请先完成用户注册流程，再重新扫码登录。' });
+      return;
+    }
 
     await this.ctx.render('login.njk', { message: '扫码登录确认', token });
   }
