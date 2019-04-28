@@ -1,7 +1,9 @@
 'use strict';
 
+const { jwt } = require('./config.secret');
+
 module.exports = appInfo => {
-  const config = exports = {};
+  const config = (exports = {});
 
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1540154736927_5913';
@@ -12,8 +14,8 @@ module.exports = appInfo => {
   // add your config here
   config.cluster = {
     listen: {
-      port: 8103,
-    },
+      port: 8103
+    }
   };
 
   config.proxy = true;
@@ -25,10 +27,10 @@ module.exports = appInfo => {
   config.authUrl = '/auth';
 
   config.errorMongo = {
-    details: true,
+    details: true
   };
   config.errorHandler = {
-    details: true,
+    details: true
   };
 
   // mongoose config
@@ -39,8 +41,8 @@ module.exports = appInfo => {
       pass: 'Ziyouyanfa#@!',
       authSource: 'admin',
       useNewUrlParser: true,
-      useCreateIndex: true,
-    },
+      useCreateIndex: true
+    }
   };
 
   // redis config
@@ -49,8 +51,8 @@ module.exports = appInfo => {
       port: 6379, // Redis port
       host: '127.0.0.1', // Redis host
       password: null,
-      db: 0,
-    },
+      db: 0
+    }
   };
 
   // mq config
@@ -59,45 +61,48 @@ module.exports = appInfo => {
       hostname: '127.0.0.1',
       username: 'smart',
       password: 'smart123',
-      vhost: 'smart',
+      vhost: 'smart'
     },
     app: true,
-    agent: true,
+    agent: true
   };
 
   // 安全配置
   config.security = {
     csrf: {
       // ignoreJSON: true, // 默认为 false，当设置为 true 时，将会放过所有 content-type 为 `application/json` 的请求
-      enable: false,
-    },
+      enable: false
+    }
   };
 
   // JWT config
   config.jwt = {
+    ...jwt,
     expiresIn: '1d',
-    subject: 'weixin',
+    subject: 'weixin'
   };
 
   config.view = {
     defaultViewEngine: 'nunjucks',
     mapping: {
-      '.njk': 'nunjucks',
-    },
+      '.njk': 'nunjucks'
+    }
   };
 
   config.test = {
-    enable: true,
+    enable: true
   };
 
   // axios service config
   config.axios = {
-    corp: { // 企业信息查询服务
-      baseUrl: 'http://localhost:8102/api',
+    corp: {
+      // 企业信息查询服务
+      baseUrl: 'http://localhost:8102/api'
     },
-    user: { // 学生信息查询服务
-      baseUrl: 'http://localhost:8101/api',
-    },
+    user: {
+      // 学生信息查询服务
+      baseUrl: 'http://localhost:8101/api'
+    }
   };
 
   return config;
