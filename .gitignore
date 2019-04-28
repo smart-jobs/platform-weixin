@@ -12,3 +12,6 @@ run/
 *.un~
 .travis.yml
 appveyor.yml
+bak/
+config/config.local.js
+config/config.prod.js
